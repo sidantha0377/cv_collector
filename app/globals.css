@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+:root {
+  /* Use a dark color for the actual page background */
+  --background: #bbf479; 
+  --foreground: #052e02;;
+
+  /* Your brand colors as accents */
+  --brand-lime: #bbf479;
+  --brand-forest: #052e02;
+  
+  /* Card Backgrounds */
+  --card-bg: #bbf479;
+  --card-border: #052e02;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: Arial, sans-serif;
+}
