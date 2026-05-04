@@ -1,6 +1,6 @@
 'use client';
 import { useRouter } from "next/navigation"; 
-import {handleLogout} from "./acttion"
+import {handleLogout} from "../lib/actions/acttion"
 export default function NavBar() {
   const router = useRouter(); 
 

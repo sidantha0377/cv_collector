@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { cvRepository } from "@/lib/azure/repositories";
-import { getSession } from "@/lib/session";
+import { getSession } from "@/lib/auth/session";
 import { generateSasUrl } from "@/lib/azure/blob-client";
 
 export async function GET(

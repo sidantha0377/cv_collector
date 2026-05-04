@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getSession } from "@/lib/session";
-import { cvRepository } from "@/lib/azure/repositories";
+import { getSession } from "@/lib/auth/session";
+import { cvRepository } from "@/lib/repositories/cvRepository";
 
 export async function GET() {
   const session = await getSession();

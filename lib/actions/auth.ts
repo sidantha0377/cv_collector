@@ -1,9 +1,9 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { otpService } from "@/lib/otp/otp-service";
-import { sessionRepository } from "@/lib/azure/repositories";
-import { destroySession } from "@/lib/session";
+import { otpService } from "@/lib/service/otp/otp-service";
+import { sessionRepository } from "@/lib/repositories/sessionRepository";
+import { destroySession } from "@/lib/auth/session";
 import { cookies } from "next/headers";
 
 const DEFAULT_TENANT_ID = process.env.DEFAULT_TENANT_ID ?? "default";
@@ -46,5 +46,5 @@ export async function verifyOtp(email: string, otpCode: string) {
 
 export async function logout() {
   await destroySession();
-  redirect("/login");
+  redirect("/");
 }
