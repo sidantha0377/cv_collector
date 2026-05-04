@@ -1,4 +1,5 @@
-import { cvRepository, jobRepository } from "../azure/repositories";
+import { cvRepository } from "@/lib/repositories/cvRepository";
+import { jobRepository } from "@/lib/repositories/jobRepository";
 
 const DEFAULT_TENANT_ID = process.env.DEFAULT_TENANT_ID ?? "default";
 
@@ -15,6 +16,10 @@ export async function sugesstCv({
   if (!job) {
     throw new Error(`Job not found: ${jobId}`);
   }
+  const jobdiscription: { jobdiscription: string; jobKeyWord: string } = {
+    jobdiscription: job.description,
+    jobKeyWord: job.requirements,
+  };
   const cvContents: { cvId: string; content: string }[] = [];
 
   for (const cvId of cvIds) {
@@ -30,4 +35,6 @@ export async function sugesstCv({
   if (cvContents.length === 0) {
     throw new Error("No valid CVs found for the provided IDs");
   }
+  console.log("job details: ", jobdiscription);
+  console.log("cv data", cvContents);
 }

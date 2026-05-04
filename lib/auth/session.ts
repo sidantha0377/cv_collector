@@ -1,8 +1,8 @@
 import { cookies } from "next/headers";
-import { sessionRepository } from "./azure/repositories";
-import type { SessionEntity } from "./types/azure-tables";
-import { SessionMeta } from "./session-utils";
-export { parseSessionMeta } from "./session-utils";
+import { sessionRepository } from "@/lib/repositories/sessionRepository";
+import type { SessionEntity } from "../types/azure-tables";
+import { SessionMeta } from "../session-utils";
+export { parseSessionMeta } from "../session-utils";
 export type { SessionMeta };
 
 const SESSION_COOKIE = "session_id";

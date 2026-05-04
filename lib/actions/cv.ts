@@ -1,8 +1,8 @@
 "use server";
 
 import { BlobServiceClient } from "@azure/storage-blob";
-import { cvRepository } from "@/lib/azure/repositories";
-import { requireSession } from "@/lib/session";
+import { cvRepository } from "@/lib/repositories/cvRepository";
+import { requireSession } from "@/lib/auth/session";
 import type { CvEntity } from "@/lib/types/azure-tables";
 import { extractPdfText } from "./pdf-to-txt";
 

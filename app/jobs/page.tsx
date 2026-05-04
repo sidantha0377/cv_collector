@@ -1,11 +1,10 @@
-// app/jobs/page.tsx
-
-import { getSession } from "@/lib/session";
 import { redirect } from "next/navigation";
-import { JobListings } from "./jobList";
-import { applicationRepository } from "@/lib/azure/repositories";
+import { JobListings } from "./components/jobList";
+import { applicationRepository } from "@/lib/repositories/applicationRepository";
+import { getSession } from "@/lib/auth/session";
 
 export default async function JobsPage() {
+  
   const session = await getSession();
   if (!session) redirect("/");
 

@@ -1,5 +1,5 @@
-import { applicationRepository } from "./azure/repositories";
-import type { ApplicationEntity } from "./types/azure-tables";
+import { applicationRepository } from "@/lib/repositories/applicationRepository";
+import type { ApplicationEntity } from "../../types/azure-tables";
 
 export type Application = ApplicationEntity;
 

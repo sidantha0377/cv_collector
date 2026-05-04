@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import type { JobEntity ,CvEntity } from "@/lib/types/azure-tables";
-import CVsuggest from "./CVsuggest";
+import CVsuggest from "@/app/jobs/components/cvSuggest";
 
 interface Props {
   appliedJobIds: Set<string>;

@@ -1,4 +1,4 @@
-import { Application } from "@/lib/applications";
+import { Application } from "@/lib/service/applications/applications-service";
 import Link from "next/link";
 
 interface Props {

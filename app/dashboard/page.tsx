@@ -1,9 +1,10 @@
 import { redirect } from "next/navigation";
-import { getSession, parseSessionMeta } from "@/lib/session";
-import { cvRepository, applicationRepository } from "@/lib/azure/repositories";
-import { UserCard } from "./UserCard";
-import { AppliedJobs } from "./AppliedJobs";
-import { CVSection } from "./CVSection";
+import { getSession, parseSessionMeta } from "@/lib/auth/session";
+import { cvRepository,} from "@/lib/repositories/cvRepository";
+import {applicationRepository } from "@/lib/repositories/applicationRepository";
+import { UserCard } from "./components/UserCard";
+import { AppliedJobs } from "./components/AppliedJobs";
+import { CVSection } from "./components/CVSection";
 
 export default async function DashboardPage() {
   const session = await getSession();

@@ -1,6 +1,6 @@
 import crypto from "crypto";
 import { getEmailClient, getSenderAddress } from "@/lib/azure/email-client";
-import { otpRepository } from "@/lib/azure/repositories";
+import { otpRepository } from "@/lib/repositories/otpRepository";
 
 const OTP_LENGTH = 6;
 const OTP_TTL_MINUTES = 10;
