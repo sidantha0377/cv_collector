@@ -56,4 +56,25 @@ export interface JobEntity extends BaseEntity {
   postedAt: string;
   closingAt?: string;
   isActive: boolean;
+  adminId: string;
+  tags: string;
+  notify: boolean;
+  notifyStates: "not_selected" | "pending" | "complet";
+}
+
+export interface AdminEntity extends BaseEntity {
+  email: string;
+  createdAt: string;
+  createdBy: string; // email of the admin who added this admin (or "seed" for seeded)
+}
+
+export interface TagsEntity extends BaseEntity {
+  tag: string;
+  count: number;
+}
+
+export interface CandidateEntity extends BaseEntity {
+  email: string;
+  enotify: boolean;
+  ftags: string;
 }
