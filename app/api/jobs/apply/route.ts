@@ -1,10 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth/session";
-import {
-  jobRepository,
-  applicationRepository,
-  cvRepository,
-} from "@/lib/azure/repositories";
+import { jobRepository } from "@/lib/repositories/jobRepository";
+import { applicationRepository } from "@/lib/repositories/applicationRepository";
+import { cvRepository } from "@/lib/repositories/cvRepository";
 
 const DEFAULT_TENANT_ID = process.env.DEFAULT_TENANT_ID ?? "default";
 

@@ -10,6 +10,9 @@ export const TABLE_NAMES = {
   CVS: "Cvs",
   APPLICATIONS: "Applications",
   JOBS: "Jobs",
+  ADMINS: "Admins",
+  TAGS: "Tags",
+  CANDIDATES: "CandidateProfiles",
 } as const;
 
 export type TableName = (typeof TABLE_NAMES)[keyof typeof TABLE_NAMES];

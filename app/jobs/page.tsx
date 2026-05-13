@@ -10,6 +10,7 @@ export default async function JobsPage() {
 
   const applications = await applicationRepository.listByCandidate(session.rowKey);
   const appliedJobIds = new Set(applications.map((a) => a.jobId));
+  const candidateEmail = session.email;
 
   return (
     <div className="flex flex-col gap-6 p-6">
@@ -19,7 +20,7 @@ export default async function JobsPage() {
           Find and apply for your next opportunity.
         </p>
       </div>
-      <JobListings appliedJobIds={appliedJobIds} candidateRowKey={session.rowKey} />
+      <JobListings candidateEmail={candidateEmail} appliedJobIds={appliedJobIds} candidateRowKey={session.rowKey} />
     </div>
   );
 }
