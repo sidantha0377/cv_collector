@@ -30,6 +30,22 @@ export const applicationRepository = {
     await client.upsertEntity(entity, "Replace");
     return entity;
   },
+  // Finds an existing application for same candidate + same job
+  async findByCandidateAndJob(
+    candidateRowKey: string,
+    jobId: string,
+  ): Promise<ApplicationEntity | null> {
+    const client = getTableClient(TABLE_NAMES.APPLICATIONS);
+    const entities = client.listEntities<ApplicationEntity>({
+      queryOptions: {
+        filter: odata`PartitionKey eq ${candidateRowKey} and jobId eq ${jobId}`,
+      },
+    });
+    for await (const entity of entities) {
+      return entity; // first match is enough
+    }
+    return null;
+  },
 
   // Queries all applications for a specific candidate
   async listByCandidate(candidateRowKey: string): Promise<ApplicationEntity[]> {

@@ -9,7 +9,7 @@ import { CVSection } from "./components/CVSection";
 export default async function DashboardPage() {
   const session = await getSession();
   if (!session) redirect("/");
-
+  console.log(session.role)
   const meta = parseSessionMeta(session);
   const cvs = await cvRepository.listByUser(session.email);
   const applications = await applicationRepository.listByCandidate(session.email);

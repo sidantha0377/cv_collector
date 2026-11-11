@@ -1,4 +1,4 @@
-import type { SessionEntity } from "./types/azure-tables";
+import type { SessionEntity } from "../types/azure-tables";
 
 export interface SessionMeta {
   name?: string;

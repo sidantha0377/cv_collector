@@ -1,14 +1,24 @@
 import crypto from "crypto";
-import { getEmailClient, getSenderAddress } from "@/lib/azure/email-client";
+import {
+  getEmailClientOTP,
+  getSenderAddressOTP,
+} from "@/lib/azure/email-client";
 import { otpRepository } from "@/lib/repositories/otpRepository";
 
 const OTP_LENGTH = 6;
 const OTP_TTL_MINUTES = 10;
 const APP_NAME = process.env.NEXT_PUBLIC_APP_NAME ?? "CV Collector";
 
+const OTP_SEND_MAX_RETRIES = 3;
+const OTP_SEND_RETRY_DELAY_MS = 1500; // wait 1.5s between retries
+
 function generateOtpCode(): string {
   const buffer = crypto.randomInt(0, 999_999);
   return String(buffer).padStart(OTP_LENGTH, "0");
+}
+
+function sleep(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
 }
 
 function buildEmailHtml(otpCode: string, role: string): string {
@@ -34,9 +44,7 @@ function buildEmailHtml(otpCode: string, role: string): string {
 </head>
 <body>
   <div class="wrapper">
-    <div class="header">
-      <h1>${APP_NAME}</h1>
-    </div>
+    <div class="header"><h1>${APP_NAME}</h1></div>
     <div class="body">
       <p>Hi there,</p>
       <p>Use the code below to sign in to your <strong>${role}</strong> account. This code expires in <strong>${OTP_TTL_MINUTES} minutes</strong>.</p>
@@ -51,15 +59,12 @@ function buildEmailHtml(otpCode: string, role: string): string {
     </div>
   </div>
 </body>
-</html>
-`;
+</html>`;
 }
 
 function buildEmailText(otpCode: string): string {
   return `Your ${APP_NAME} login code is: ${otpCode}\n\nThis code expires in ${OTP_TTL_MINUTES} minutes.\n\nIf you did not request this, ignore this email.`;
 }
-
-// otp service
 
 export type OtpRole = "candidate" | "admin";
 
@@ -75,16 +80,79 @@ export interface VerifyOtpResult {
   error?: string;
 }
 
+// Attempts to send via Azure, retries on 429 TooManyRequests
+// async function sendWithRetry(
+//   email: string,
+//   otpCode: string,
+//   role: string,
+// ): Promise<string | undefined> {
+//   const emailClient = getEmailClientOTP();
+//   const senderAddress = getSenderAddressOTP();
+//   console.log("send with re try , email :", email);
+//   let lastError: unknown;
+
+//   for (let attempt = 1; attempt <= OTP_SEND_MAX_RETRIES; attempt++) {
+//     console.log("try no:", attempt);
+//     try {
+//       const poller = await emailClient.beginSend({
+//         senderAddress,
+//         recipients: {
+//           to: [{ address: email }],
+//         },
+//         content: {
+//           subject: `Your ${APP_NAME} login code: ${otpCode}`,
+//           html: buildEmailHtml(otpCode, role),
+//           plainText: buildEmailText(otpCode),
+//         },
+//       });
+
+//       // No polling — fire and return immediately
+//       const messageId = poller.getResult()?.id;
+//       console.log("msg : ", messageId);
+//       return messageId;
+//     } catch (err: any) {
+//       lastError = err;
+
+//       const is429 =
+//         err?.statusCode === 429 ||
+//         err?.code === "TooManyRequests" ||
+//         err?.details?.xMsErrorCode === "TooManyRequests";
+
+//       if (is429 && attempt < OTP_SEND_MAX_RETRIES) {
+//         // Respect Azure retry-after header if present, else use default delay
+//         const retryAfterSec = parseInt(err?.details?.["retry-after"] ?? "0");
+//         const waitMs =
+//           retryAfterSec > 0
+//             ? retryAfterSec * 1000 + 200 // a little buffer
+//             : OTP_SEND_RETRY_DELAY_MS * attempt; // exponential: 1.5s, 3s
+
+//         console.warn(
+//           `[otpService.send] 429 on attempt ${attempt}/${OTP_SEND_MAX_RETRIES} — retrying in ${waitMs}ms`,
+//         );
+
+//         await sleep(waitMs);
+//         continue;
+//       }
+
+//       // Not a 429, or out of retries — rethrow
+//       throw lastError;
+//     }
+//   }
+
+//   throw lastError;
+// }
+
 export const otpService = {
   async send(email: string, role: OtpRole): Promise<SendOtpResult> {
+    console.log("try to send otp , email :", email);
     try {
       const otpCode = generateOtpCode();
 
       await otpRepository.create(email, otpCode, role, OTP_TTL_MINUTES);
 
-      const emailClient = getEmailClient();
-      const senderAddress = getSenderAddress();
-
+      // const messageId = await sendWithRetry(email, otpCode, role);
+      const emailClient = getEmailClientOTP();
+      const senderAddress = getSenderAddressOTP();
       const poller = await emailClient.beginSend({
         senderAddress,
         recipients: {
@@ -97,16 +165,9 @@ export const otpService = {
         },
       });
 
-      const result = await poller.pollUntilDone();
+      const messageId = poller.getResult()?.id;
 
-      if (result.status === "Succeeded") {
-        return { success: true, messageId: result.id };
-      }
-
-      return {
-        success: false,
-        error: `Email delivery failed with status: ${result.status}`,
-      };
+      return { success: true, messageId };
     } catch (err) {
       console.error("[otpService.send]", err);
       return {

@@ -2,7 +2,7 @@
 "use client";
 
 import type { SessionEntity } from "@/lib/types/azure-tables";
-import { parseSessionMeta } from "@/lib/session-utils";
+import { parseSessionMeta } from "@/lib/auth/session-utils";
 
 interface Props {
   session: SessionEntity;
